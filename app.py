@@ -11,7 +11,7 @@ st.latex(r'''
 ''')
 
 st.latex(r'''
-   q_{\text{rad}} + q_{\text{resp}} = \pm\Big(U A_{c} (T_{i} - T_{e}) + F P (T_{i}-T_{e})\Big) + \dot{\text{m}}c_{p}(T_{i} - T_{e}) + E\,FC\,q_{\text{rad}} 
+   q_{\text{rad}} + q_{\text{resp}} = \pm\Big(U A_{c} (T_{i} - T_{e}) + F P (T_{i}-T_{e})\Big) + \\ +\,\dot{\text{m}}\,c_{p}(T_{i} - T_{e}) + E\,FC\,q_{\text{rad}} 
     + q_{\text{fot}} + (T_{i}^{4} - \epsilon T_{e}^{4}) 
 ''')
 
