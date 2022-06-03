@@ -3,6 +3,8 @@ import streamlit as st
 
 Ti = symbols('x')
 
+st.header("Temperatura interna (Ti)")
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -32,4 +34,26 @@ expr = Eq(- qrad - qresp + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * 
 
 sol = solve(expr, Ti)
 
-st.write(sol[1] - 273)
+st.write(sol[1] - 273.15)
+
+# Balanço de massa
+# mp_ponto = ma_ponto * (wi - we)
+# wi = mp_ponto/ma_ponto + we
+
+st.header("Balanço de massa (wi)")
+
+colA, colB, colC = st.columns(3)
+
+with colA:
+    mp_ponto = st.number_input("mp_ponto", key="mp_ponto")
+with colB:
+    ma_ponto = st.number_input("ma_ponto", key="ma_ponto")
+with colC:
+    we = st.number_input("we", key="we")
+
+wi = symbols("x")
+
+expr = Eq(-mp_ponto + ma_ponto * (wi - we))
+sol = solve(expr, wi)
+
+st.write(sol[0])
