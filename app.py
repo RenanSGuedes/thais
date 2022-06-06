@@ -124,7 +124,7 @@ with col2:
         F_{\text{luz}} = \dfrac{\text{Intensidade de luz}}{53819.55}
     ''')
     st.latex(r'''
-        F_{\text{temp}} = \dfrac{\text{3.89}}{T_{\text{externa do ar}} - T_{\text{RE}}}
+        F_{\text{temp}} = \dfrac{\text{5.52}}{\sqrt{{\text{largura}_{\text{estufa}}}}}
     ''')
 
 st.write("Verificar qual é maior entre Fcv e Fvel")
