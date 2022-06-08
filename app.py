@@ -106,22 +106,22 @@ with st.expander("Eficiência"):
         \eta=\dfrac{T_{\text{BSE}} - (T_{\text{resfriamento}} = T_{e})}{T_{\text{BSE}} - T_{\text{BUE}}}
     ''')
 
-    st.latex(r'''
-        \text{Para o}\;\omega_{e}\;\text{do exercício anterior, achar}\;T_{\text{BSE}}\;\text{na carta.}
-    ''')
+    st.write(
+        "Para o we do exercício anterior, achar TBSE na carta"
+    )
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        tbse = st.number_input("Tbse (°C)", key="tbse", value=34)
+        tbse = st.number_input("Tbse (°C)", key="tbse", value=30.4)
     with col2:
-        tbue = st.number_input("Tbue (°C)", key="tbue", value=28)
+        tbue = st.number_input("Tbue (°C)", key="tbue", value=22.2)
     with col3:
-        tre = st.number_input("Tre (°C)", key="tre", value=29)
+        eficiencia = st.number_input("Eficiência (%)", key="eficiencia", value=85)
 
-    eficiencia = (tbse - tre) / (tbse - tbue)
+    tre = tbse - (eficiencia / 100) * (tbse - tbue)
 
-    st.write("Eficiência obtida = {:.2f}%".format(eficiencia * 100))
+    st.write("Temperatura = {:.2f}°C".format(tre))
 
 # Achar m_ponto
 
@@ -133,7 +133,7 @@ with st.expander("Fluxo mássico"):
             F_{\text{elev}} = \dfrac{101325}{BP}
         ''')
         st.latex(r'''
-            F_{\text{temp}} = \dfrac{\text{3.89}}{T_{\text{externa do ar}} - T_{\text{resfriamento}}}
+            F_{\text{temp}} = \dfrac{\text{3.89}}{\Delta{T}}
         ''')
         st.latex(r'''
             F_{\text{cv}} = F_{\text{elev}}\,F_{\text{luz}}\,F_{\text{temp}}
@@ -143,7 +143,7 @@ with st.expander("Fluxo mássico"):
             F_{\text{luz}} = \dfrac{\text{Intensidade de luz}}{53819.55}
         ''')
         st.latex(r'''
-            F_{\text{temp}} = \dfrac{\text{5.52}}{\sqrt{{\text{largura}_{\text{estufa}}}}}
+            F_{\text{vel}} = \dfrac{\text{5.52}}{\sqrt{{\text{comprimento}_{\text{estufa}}}}}
         ''')
 
     st.write("Verificar qual é maior entre Fcv e Fvel")
@@ -155,14 +155,13 @@ with st.expander("Fluxo mássico"):
     colA, colB, colC = st.columns(3)
 
     with colA:
-        bp = st.number_input("Pressão barométrica (Pa)", value=101700)
-        intensidade_luz = st.number_input("Intensidade de luz (lux)", value=150000)
+        bp = st.number_input("Pressão barométrica (Pa)", value=93997)
+        intensidade_luz = st.number_input("Intensidade de luz (lux)", value=150710)
     with colB:
-        t_externa_do_ar = st.number_input("Temperatura externa do ar (°C)", value=35)
-        tre = st.number_input("Tre (Temperatura de resfriamento)", value=tre)
+        delta_T = st.number_input("Delta T (chute, Thais considerou = 1)", value=3.89)
     with colC:
         largura_da_estufa = st.number_input("Largura da estufa (m) (cal/g°C)", value=10)
-        densidade_ar = st.number_input("Densidade do ar (1.07 kg/m³)", value=1.07)
+        densidade_ar = st.number_input("Densidade do ar (1.07 kg/m³)", value=1.05)
 
     # Verificar qual é maior (Fcv e Fvel)
     # Novo v_ponto = comprimento *largura_da_estufa * 0.04064 * (Fcv || Fvel)
@@ -171,7 +170,7 @@ with st.expander("Fluxo mássico"):
 
     felev = 101325/bp
     fluz = intensidade_luz/53819.55
-    ftemp = 3.89/(t_externa_do_ar - tre)
+    ftemp = 3.89/delta_T
     fvel = 5.52/largura_da_estufa**.5
     fcv = felev * fluz * ftemp
 
@@ -194,7 +193,8 @@ with st.expander("Fluxo mássico"):
     v_ponto = comprimento_piso * largura_da_estufa * .04064 * maior
     m_ponto_x = v_ponto * densidade_ar
 
-    st.write("Fluxo mássico obtido {:.2f} (kg/s)".format(m_ponto_x))
+    st.write("Fluxo volumétrico obtido = {:.2f} (m³/s)".format(v_ponto))
+    st.write("Fluxo mássico obtido = {:.2f} (kg/s)".format(m_ponto_x))
 
 with st.expander("Novo Ti"):
     st.latex(r'''
@@ -208,7 +208,7 @@ with st.expander("Novo Ti"):
     with colX:
         m_ponto = st.number_input("m_ponto (kg/s)", value=m_ponto_x)
     with colY:
-        Te = st.number_input("Temperatura externa (T_e, em K)", value=t_externa_do_ar + 273)
+        Te = st.number_input("Temperatura externa (T_e, em K)", value=32 + 273)
     with colZ:
         T_resfriamento = st.number_input("Temperatura de resfriamento (T_resfriamento, em K)", value=300)
 
