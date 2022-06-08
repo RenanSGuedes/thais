@@ -37,7 +37,7 @@ with st.expander("Temperatura interna (Ti)"):
 
     with col1:
         U = st.number_input("Coeficiente global (U, em W/(m² · K))", key='U', value=7.14)
-        Ac = st.number_input("Ac", key='Ac', value=1)
+        Ac = st.number_input("Ac", key='Ac', value=771)
         F = st.number_input("Fator perimetral (F)", key='F', value=1.4)
         transmitancia_do_piso_ou_veget = st.number_input("Transmitância de piso/vegetação (tau_pv, de 0 a 1)", value=.85)
         comprimento_piso = st.number_input("Comprimento do piso (C_piso, em m)", value=50)
@@ -80,11 +80,11 @@ with st.expander("Balanço de massa (wi)"):
     colA, colB, colC = st.columns(3)
 
     with colA:
-        mp_ponto = st.number_input("mp_ponto (kg/s)", key="mp_ponto", value=5)
+        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto", value=5)
     with colB:
         ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto", value=27)
     with colC:
-        we = st.number_input("we (%)", key="we", value=68)
+        we = st.number_input("we (Umidade relativa externa INV/VER) (%)", key="we", value=68)
 
     wi = symbols("x")
 
@@ -207,10 +207,11 @@ with st.expander("Novo Ti"):
 
     with colX:
         m_ponto = st.number_input("m_ponto (kg/s)", value=m_ponto_x)
+        qrad = st.number_input("qrad (W)", value=322000)
     with colY:
-        Te = st.number_input("Temperatura externa (T_e, em K)", value=32 + 273)
+        Te = st.number_input("Temperatura externa (T_e, em K)", value=30.4 + 273)
     with colZ:
-        T_resfriamento = st.number_input("Temperatura de resfriamento (T_resfriamento, em K)", value=300)
+        T_resfriamento = st.number_input("Temperatura de resfriamento (T_resfriamento, em K)", value=tre + 273)
 
     expr = Eq(- qrad - .1 * .03 * qrad + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * cp * (Ti - T_resfriamento) + E * Fc * qrad
               + .03 * qrad + transmitancia_do_piso_ou_veget * transmitancia_na_reirrad * (comprimento_piso * largura_piso) *
@@ -220,3 +221,31 @@ with st.expander("Novo Ti"):
 
     st.write("Nova temperatura interna obtida = {:.2f} °C (Obs: Comparar com temperaturas de conforto no verão e inverno.)"
              .format(sol[1] - 273.15))
+
+with st.expander("Balanço de massa (wi)"):
+
+    st.latex(r'''
+        \dot{\text{m}}_{p} = \dot{\text{m}}_{v}
+    ''')
+
+    st.latex(r'''
+        \dot{\text{m}}_{p} = \dot{\text{m}}_{a}\,(\omega_{i} - \omega_{e})
+    ''')
+
+    colA, colB, colC = st.columns(3)
+
+    with colA:
+        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto_2", value=5)
+    with colB:
+        ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto_2", value=27)
+    with colC:
+        we = st.number_input("we (Umidade relativa externa) (%)", key="we_2", value=68)
+
+    wi = symbols("x")
+
+    expr = Eq(-mp_ponto + ma_ponto * (wi / 100 - we / 100))
+    sol = solve(expr, wi)
+
+    st.write("Umidade relativa interna obtida = {:.2f} % (Obs: Comparar com as umidades de conforto no verão e "
+             "inverno.) "
+             .format(sol[0]))
