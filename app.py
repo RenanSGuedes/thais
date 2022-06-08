@@ -40,7 +40,7 @@ with st.expander("Temperatura interna (Ti)"):
         Ac = st.number_input("Ac", key='Ac', value=1)
         F = st.number_input("Fator perimetral (F)", key='F', value=1.4)
         transmitancia_do_piso_ou_veget = st.number_input("Transmitância de piso/vegetação (tau_pv, de 0 a 1)", value=.85)
-        comprimento_piso = st.number_input("Comprimento do piso (C_piso, em m)", value=10)
+        comprimento_piso = st.number_input("Comprimento do piso (C_piso, em m)", value=50)
     with col2:
         Te = st.number_input("Temperatura externa (T_e, em K)", key="te", value=308)
         P = st.number_input("Perímetro (P, em m)", key="p", value=33)
