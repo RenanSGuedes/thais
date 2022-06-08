@@ -9,6 +9,9 @@ image = Image.open('images/greenhouses.jpeg')
 st.image(image, caption=None)
 
 st.header("Parte 2")
+st.write(
+    "[Link para achar qrad, qresp e qfot](https://docs.google.com/spreadsheets/d/1vZasm4fKt2AkOGR2y5VmaQlKSd5nDu_07daHEjmvXk0/edit#gid=1896904256)"
+)
 
 with st.expander("Temperatura interna (Ti)"):
     st.latex(r'''
@@ -80,7 +83,7 @@ with st.expander("Balanço de massa (wi)"):
     colA, colB, colC = st.columns(3)
 
     with colA:
-        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto", value=5)
+        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto", value=4.05)
     with colB:
         ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto", value=27)
     with colC:
@@ -235,7 +238,7 @@ with st.expander("Balanço de massa (wi)"):
     colA, colB, colC = st.columns(3)
 
     with colA:
-        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto_2", value=5)
+        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto_2", value=4.05)
     with colB:
         ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto_2", value=27)
     with colC:
