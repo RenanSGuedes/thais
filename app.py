@@ -1,196 +1,222 @@
 from sympy import symbols, solve, Eq
 import streamlit as st
+from PIL import Image
 
 Ti = symbols('x')
 
-st.header("Temperatura interna (Ti)")
+image = Image.open('images/greenhouses.jpeg')
 
-st.latex(r'''
-    q_{\text{rad}} + q_{\text{resp}} = \pm (q_{\text{cond}} + q_{\text{pis}}) + q_{\text{sven}} + q_{\text{vla}} 
-    + q_{\text{fot}} + q_{\text{rtc}}
-''')
+st.image(image, caption=None)
 
-st.latex(r'''
-   q_{\text{rad}} + q_{\text{resp}} = \pm\Big(U A_{c} (T_{i} - T_{e}) + F P (T_{i}-T_{e})\Big) + \\ +\,\dot{\text{m}}\,c_{p}(T_{i} - T_{e}) + E\,FC\,q_{\text{rad}} 
-    + q_{\text{fot}} + (T_{i}^{4} - \epsilon T_{e}^{4}) 
-''')
+st.header("Parte 2")
 
-col1, col2, col3 = st.columns(3)
+with st.expander("Temperatura interna (Ti)"):
+    st.latex(r'''
+        q_{\text{rad}} + q_{\text{resp}} = \pm (q_{\text{cond}} + q_{\text{pis}}) + q_{\text{sven}} + q_{\text{vla}} 
+        + q_{\text{fot}} + q_{\text{rtc}}
+    ''')
 
-with col1:
-    qrad = st.number_input("qrad (W)", key="qrad", value=42310.6)
-with col2:
-    qresp = st.number_input("qresp (W)", key="qresp", value=2952.31)
-with col3:
-    qfot = st.number_input("qfot (W)", key="qfot", value=1269.048)
+    st.latex(r'''
+       q_{\text{rad}} + q_{\text{resp}} = \pm\Big(U A_{c} (T_{i} - T_{e}) + F P (T_{i}-T_{e})\Big) + \\ +\,\dot{\text{m}}\,c_{p}(T_{i} - T_{e}) + E\,FC\,q_{\text{rad}} 
+        + q_{\text{fot}} + \tau_{pv}\tau_{\text{ri}}A\sigma(T_{i}^{4} - \epsilon T_{e}^{4}) 
+    ''')
 
-with col1:
-    U = st.number_input("U", key='U', value=7.14)
-    Ac = st.number_input("Ac", key='Ac', value=1)
-    F = st.number_input("F", key='F', value=1.4)
-    transmitancia_do_piso_ou_veget = st.number_input("Transmitância de piso/vegetação", value=.85)
-    comprimento_piso = st.number_input("Comprimento do piso", value=10)
-with col2:
-    Te = st.number_input("Te", key="te", value=308)
-    P = st.number_input("P", key="p", value=33)
-    E = st.number_input("E", key="eee", value=0.8)
-    transmitancia_na_reirrad = st.number_input("Transmitância na reirradiação", value=.8)
-    largura_piso = st.number_input("Largura do piso", value=6)
-with col3:
-    m_ponto = st.number_input("m_ponto", key="m_ponto", value=4.21)
-    Fc = st.number_input("Fc", key="fc", value=0.214)
-    emissividade_atmosfera = st.number_input("Emissividade atmosfera", key="Emissividade atmosfera", value=0.83)
-    cp = st.number_input("cp", key="cp", value=1006)
+    st.latex(r'''
+           q_{\text{rad}} + 0.003\cdot q_{\text{rad}} = \pm\Big(U A_{c} (T_{i} - T_{e}) + F P (T_{i}-T_{e})\Big) + \\ +\,\dot{\text{m}}\,c_{p}(T_{i} - T_{e}) + E\,FC\,q_{\text{rad}} 
+            + 0.03\cdot q_{\text{rad}} + \tau_{pv}\tau_{\text{ri}}(C_{\text{piso}}\cdot L_{\text{piso}})\sigma(T_{i}^{4} - \epsilon T_{e}^{4}) 
+        ''')
 
-expr = Eq(- qrad - .1 * .03 * qrad + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * cp * (Ti - Te) + E * Fc * qrad
-          + .03 * qrad + transmitancia_do_piso_ou_veget * transmitancia_na_reirrad * (comprimento_piso * largura_piso) *
-          5.678 * 10 ** (-8) * (Ti ** 4 - emissividade_atmosfera * Te ** 4))
+    col1, col2, col3 = st.columns(3)
 
-sol = solve(expr, Ti)
+    with col1:
+        qrad = st.number_input("Taxa de transferência de calor por radiação (qrad, em W)", key="qrad", value=42310.6, help="Hello")
+    with col2:
+        qresp = st.number_input("Taxa de transferência de calor devido a respiração (q_resp, em W)", key="qresp", value=2952.31)
+    with col3:
+        qfot = st.number_input("Taxa de transferência de calor devido a fotossíntese (q_fot, em W)", key="qfot", value=1269.048)
 
-st.write("Temperatura interna obtida = {:.2f} °C (Obs: Comparar com temperaturas de conforto no verão e inverno.)"
-         .format(sol[1] - 273.15))
+    with col1:
+        U = st.number_input("Coeficiente global (U, em W/(m² · K))", key='U', value=7.14)
+        Ac = st.number_input("Ac", key='Ac', value=1)
+        F = st.number_input("Fator perimetral (F)", key='F', value=1.4)
+        transmitancia_do_piso_ou_veget = st.number_input("Transmitância de piso/vegetação (tau_pv, de 0 a 1)", value=.85)
+        comprimento_piso = st.number_input("Comprimento do piso (C_piso, em m)", value=10)
+    with col2:
+        Te = st.number_input("Temperatura externa (T_e, em K)", key="te", value=308)
+        P = st.number_input("Perímetro (P, em m)", key="p", value=33)
+        E = st.number_input("E", key="eee", value=0.8)
+        transmitancia_na_reirrad = st.number_input("Transmitância na reirradiação (tau_ri, de 0 a 1)", value=.8)
+        largura_piso = st.number_input("Largura do piso (L_piso, em m)", value=6)
+    with col3:
+        m_ponto = st.number_input("m_ponto", key="m_ponto", value=4.21)
+        Fc = st.number_input("Fc", key="fc", value=0.214)
+        emissividade_atmosfera = st.number_input("Emissividade atmosfera", key="Emissividade atmosfera", value=0.83)
+        cp = st.number_input("Calor específico (cp, em J/(kg · K)", key="cp", value=1006)
+
+    expr = Eq(- qrad - .1 * .03 * qrad + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * cp * (Ti - Te) + E * Fc * qrad
+              + .03 * qrad + transmitancia_do_piso_ou_veget * transmitancia_na_reirrad * (comprimento_piso * largura_piso) *
+              5.678 * 10 ** (-8) * (Ti ** 4 - emissividade_atmosfera * Te ** 4))
+
+    sol = solve(expr, Ti)
+
+    st.write("Temperatura interna obtida = {:.2f} °C (Obs: Comparar com temperaturas de conforto no verão e inverno.)"
+             .format(sol[1] - 273.15))
 
 # Balanço de massa
 # mp_ponto = ma_ponto * (wi - we)
 # wi = mp_ponto/ma_ponto + we
 
-st.header("Balanço de massa (wi)")
 
-st.latex(r'''
-    \dot{\text{m}}_{p} = \dot{\text{m}}_{v}
-''')
+with st.expander("Balanço de massa (wi)"):
 
-st.latex(r'''
-    \dot{\text{m}}_{p} = \dot{\text{m}}_{a}\,(\omega_{i} - \omega_{e})
-''')
+    st.latex(r'''
+        \dot{\text{m}}_{p} = \dot{\text{m}}_{v}
+    ''')
 
-colA, colB, colC = st.columns(3)
+    st.latex(r'''
+        \dot{\text{m}}_{p} = \dot{\text{m}}_{a}\,(\omega_{i} - \omega_{e})
+    ''')
 
-with colA:
-    mp_ponto = st.number_input("mp_ponto (kg/s)", key="mp_ponto", value=5)
-with colB:
-    ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto", value=2)
-with colC:
-    we = st.number_input("we (%)", key="we", value=67)
+    colA, colB, colC = st.columns(3)
 
-wi = symbols("x")
+    with colA:
+        mp_ponto = st.number_input("mp_ponto (kg/s)", key="mp_ponto", value=5)
+    with colB:
+        ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto", value=27)
+    with colC:
+        we = st.number_input("we (%)", key="we", value=68)
 
-expr = Eq(-mp_ponto + ma_ponto * (wi / 100 - we / 100))
-sol = solve(expr, wi)
+    wi = symbols("x")
 
-st.write("Umidade relativa interna obtida = {:.2f} % (Obs: Comparar com as umidades de conforto no verão e inverno.)"
-         .format(sol[0]))
+    expr = Eq(-mp_ponto + ma_ponto * (wi / 100 - we / 100))
+    sol = solve(expr, wi)
+
+    st.write("Umidade relativa interna obtida = {:.2f} % (Obs: Comparar com as umidades de conforto no verão e "
+             "inverno.) "
+             .format(sol[0]))
 
 st.header("Parte 3")
 
-st.latex(r'''
-    \eta=\dfrac{T_{\text{BSE}} - (T_{\text{RE}} = T_{e})}{T_{\text{BSE}} - T_{\text{BUE}}}
-''')
+with st.expander("Eficiência"):
+    st.write(
+        "[Achar TBSU a partir da TBSE, UR e Altitude](http://www.agais.com/toolbox/psicrometria3.php)"
+    )
 
-st.write("Para o we do exercício anterior, achar Tbse na carta.")
+    st.latex(r'''
+        \eta=\dfrac{T_{\text{BSE}} - (T_{\text{resfriamento}} = T_{e})}{T_{\text{BSE}} - T_{\text{BUE}}}
+    ''')
 
-col1, col2, col3 = st.columns(3)
+    st.latex(r'''
+        \text{Para o}\;\omega_{e}\;\text{do exercício anterior, achar}\;T_{\text{BSE}}\;\text{na carta.}
+    ''')
 
-with col1:
-    tbse = st.number_input("Tbse (°C)", key="tbse", value=34)
-with col2:
-    tbue = st.number_input("Tbue (°C)", key="tbue", value=28)
-with col3:
-    tre = st.number_input("Tre (°C)", key="tre", value=29)
+    col1, col2, col3 = st.columns(3)
 
-eficiencia = (tbse - tre) / (tbse - tbue)
+    with col1:
+        tbse = st.number_input("Tbse (°C)", key="tbse", value=34)
+    with col2:
+        tbue = st.number_input("Tbue (°C)", key="tbue", value=28)
+    with col3:
+        tre = st.number_input("Tre (°C)", key="tre", value=29)
 
-st.write("Eficiência obtida = {:.2f}%".format(eficiencia * 100))
+    eficiencia = (tbse - tre) / (tbse - tbue)
+
+    st.write("Eficiência obtida = {:.2f}%".format(eficiencia * 100))
 
 # Achar m_ponto
 
-st.subheader("Cálculo de mp")
+with st.expander("Fluxo mássico"):
+    col1, col2 = st.columns(2)
 
-col1, col2 = st.columns(2)
+    with col1:
+        st.latex(r'''
+            F_{\text{elev}} = \dfrac{101325}{BP}
+        ''')
+        st.latex(r'''
+            F_{\text{temp}} = \dfrac{\text{3.89}}{T_{\text{externa do ar}} - T_{\text{resfriamento}}}
+        ''')
+        st.latex(r'''
+            F_{\text{cv}} = F_{\text{elev}}\,F_{\text{luz}}\,F_{\text{temp}}
+        ''')
+    with col2:
+        st.latex(r'''
+            F_{\text{luz}} = \dfrac{\text{Intensidade de luz}}{53819.55}
+        ''')
+        st.latex(r'''
+            F_{\text{temp}} = \dfrac{\text{5.52}}{\sqrt{{\text{largura}_{\text{estufa}}}}}
+        ''')
 
-with col1:
+    st.write("Verificar qual é maior entre Fcv e Fvel")
+
     st.latex(r'''
-        F_{\text{elev}} = \dfrac{101325}{BP}
+        \dot{V} (\text{m³/s}) = \text{comprimento}\times\text{largura}_\text{estufa}\times0.04064\times(F_{\text{cv}}\,||\,F_{\text{vel}})
     ''')
+
+    colA, colB, colC = st.columns(3)
+
+    with colA:
+        bp = st.number_input("Pressão barométrica (Pa)", value=101700)
+        intensidade_luz = st.number_input("Intensidade de luz (lux)", value=150000)
+    with colB:
+        t_externa_do_ar = st.number_input("Temperatura externa do ar (°C)", value=35)
+        tre = st.number_input("Tre (Temperatura de resfriamento)", value=tre)
+    with colC:
+        largura_da_estufa = st.number_input("Largura da estufa (m) (cal/g°C)", value=10)
+        densidade_ar = st.number_input("Densidade do ar (1.07 kg/m³)", value=1.07)
+
+    # Verificar qual é maior (Fcv e Fvel)
+    # Novo v_ponto = comprimento *largura_da_estufa * 0.04064 * (Fcv || Fvel)
+
+    # ma_ponto = v_ponto * rho (depende de T)
+
+    felev = 101325/bp
+    fluz = intensidade_luz/53819.55
+    ftemp = 3.89/(t_externa_do_ar - tre)
+    fvel = 5.52/largura_da_estufa**.5
+    fcv = felev * fluz * ftemp
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.write("Felev = {:.3f}".format(felev))
+        st.write("Fluz = {:.3f}".format(fluz))
+    with col2:
+        st.write("Ftemp = {:.3f}".format(ftemp))
+        st.write("Fvel = {:.3f}".format(fvel))
+    with col3:
+        st.write("Fcv = {:.3f}".format(fcv))
+
+    if fcv > fvel:
+        maior = fcv
+    else:
+        maior = fvel
+
+    v_ponto = comprimento_piso * largura_da_estufa * .04064 * maior
+    m_ponto_x = v_ponto * densidade_ar
+
+    st.write("Fluxo mássico obtido {:.2f} (kg/s)".format(m_ponto_x))
+
+with st.expander("Novo Ti"):
     st.latex(r'''
-        F_{\text{temp}} = \dfrac{\text{3.89}}{T_{\text{externa do ar}} - T_{\text{RE}}}
-    ''')
-    st.latex(r'''
-        F_{\text{cv}} = F_{\text{elev}}\,F_{\text{luz}}\,F_{\text{temp}}
-    ''')
-with col2:
-    st.latex(r'''
-        F_{\text{luz}} = \dfrac{\text{Intensidade de luz}}{53819.55}
-    ''')
-    st.latex(r'''
-        F_{\text{temp}} = \dfrac{\text{5.52}}{\sqrt{{\text{largura}_{\text{estufa}}}}}
+       q_{\text{rad}} + 0.003\cdot q_{\text{rad}} = \pm\Big(U A_{c} (T_{i} - T_{e}) + F P (T_{i}-T_{e})\Big) + \\ +\,\dot{\text{m}}\,c_{p}(T_{i} - T_{\text{resfriamento}}) + E\,FC\,q_{\text{rad}} 
+        + 0.03\cdot q_{\text{rad}} +\\
+        +\,\tau_{pv}\tau_{\text{ri}}(C_{\text{piso}}\cdot L_{\text{piso}})\sigma(T_{i}^{4} - \epsilon T_{e}^{4}) 
     ''')
 
-st.write("Verificar qual é maior entre Fcv e Fvel")
+    colX, colY, colZ = st.columns(3)
 
-st.latex(r'''
-    \dot{V} = \text{comprimento}\times\text{largura}_\text{estufa}\times0.04064\times(F_{\text{cv}}\,||\,F_{\text{vel}})
-''')
+    with colX:
+        m_ponto = st.number_input("m_ponto (kg/s)", value=m_ponto_x)
+    with colY:
+        Te = st.number_input("Temperatura externa (T_e, em K)", value=t_externa_do_ar + 273)
+    with colZ:
+        T_resfriamento = st.number_input("Temperatura de resfriamento (T_resfriamento, em K)", value=300)
 
-colA, colB, colC = st.columns(3)
+    expr = Eq(- qrad - .1 * .03 * qrad + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * cp * (Ti - T_resfriamento) + E * Fc * qrad
+              + .03 * qrad + transmitancia_do_piso_ou_veget * transmitancia_na_reirrad * (comprimento_piso * largura_piso) *
+              5.678 * 10 ** (-8) * (Ti ** 4 - emissividade_atmosfera * Te ** 4))
 
-with colA:
-    bp = st.number_input("Pressão barométrica (Pa)", value=101700)
-    intensidade_luz = st.number_input("Intensidade de luz (lux)", value=150000)
-with colB:
-    t_externa_do_ar = st.number_input("Temperatura externa do ar (°C)", value=35)
-    tre = st.number_input("Tre (Temperatura de resfriamento)", value=tre)
-with colC:
-    largura_da_estufa = st.number_input("Largura da estufa (face menor)", value=10)
-    densidade_ar = st.number_input("Densidade do ar (1.07 kg/m³)", value=1.07)
+    sol = solve(expr, Ti)
 
-# Verificar qual é maior (Fcv e Fvel)
-# Novo v_ponto = comprimento *largura_da_estufa * 0.04064 * (Fcv || Fvel)
-
-# ma_ponto = v_ponto * rho (depende de T)
-
-felev = 101325/bp
-fluz = intensidade_luz/53819.55
-ftemp = 3.89/(t_externa_do_ar - tre)
-fvel = 5.52/largura_da_estufa**.5
-fcv = felev * fluz * ftemp
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.write("Felev = {:.3f}".format(felev))
-    st.write("Fluz = {:.3f}".format(fluz))
-with col2:
-    st.write("Ftemp = {:.3f}".format(ftemp))
-    st.write("Fvel = {:.3f}".format(fvel))
-with col3:
-    st.write("Fcv = {:.3f}".format(fcv))
-
-if fcv > fvel:
-    maior = fcv
-else:
-    maior = fvel
-
-v_ponto = comprimento_piso * largura_da_estufa * .04064 * maior
-m_ponto_x = v_ponto * densidade_ar
-
-st.write("Fluxo mássico obtido {:.2f} kg/s".format(m_ponto_x))
-
-st.subheader("Novo Ti")
-
-colX, colY = st.columns(2)
-
-with colX:
-    m_ponto = st.number_input("m_ponto", value=m_ponto_x)
-with colY:
-    Te = st.number_input("Te", value=t_externa_do_ar + 273)
-
-expr = Eq(- qrad - .1 * .03 * qrad + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * cp * (Ti - Te) + E * Fc * qrad
-          + .03 * qrad + transmitancia_do_piso_ou_veget * transmitancia_na_reirrad * (comprimento_piso * largura_piso) *
-          5.678 * 10 ** (-8) * (Ti ** 4 - emissividade_atmosfera * Te ** 4))
-
-sol = solve(expr, Ti)
-
-st.write("Nova temperatura interna obtida = {:.2f} °C (Obs: Comparar com temperaturas de conforto no verão e inverno.)"
-         .format(sol[1] - 273.15))
+    st.write("Nova temperatura interna obtida = {:.2f} °C (Obs: Comparar com temperaturas de conforto no verão e inverno.)"
+             .format(sol[1] - 273.15))
