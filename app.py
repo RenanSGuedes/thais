@@ -32,29 +32,29 @@ with st.expander("Temperatura interna (Ti)"):
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        qrad = st.number_input("Taxa de transferência de calor por radiação (qrad, em W)", key="qrad", value=42310.6, help="Hello")
+        qrad = st.number_input("Taxa de transferência de calor por radiação (qrad, em W)", key="qrad", step=.01, value=42310.60, help="Hello")
     with col2:
-        qresp = st.number_input("Taxa de transferência de calor devido a respiração (q_resp, em W)", key="qresp", value=2952.31)
+        qresp = st.number_input("Taxa de transferência de calor devido a respiração (q_resp, em W)", key="qresp", step=.01, value=2952.31)
     with col3:
-        qfot = st.number_input("Taxa de transferência de calor devido a fotossíntese (q_fot, em W)", key="qfot", value=1269.048)
+        qfot = st.number_input("Taxa de transferência de calor devido a fotossíntese (q_fot, em W)", key="qfot", step=.01, value=1269.048)
 
     with col1:
-        U = st.number_input("Coeficiente global (U, em W/(m² · K))", key='U', value=7.14)
-        Ac = st.number_input("Ac", key='Ac', value=771)
-        F = st.number_input("Fator perimetral (F)", key='F', value=1.4)
-        transmitancia_do_piso_ou_veget = st.number_input("Transmitância de piso/vegetação (tau_pv, de 0 a 1)", value=.85)
-        comprimento_piso = st.number_input("Comprimento do piso (C_piso, em m)", value=50)
+        U = st.number_input("Coeficiente global (U, em W/(m² · K))", key='U', step=.01, value=7.14)
+        Ac = st.number_input("Ac", key='Ac', step=.01, value=771.00)
+        F = st.number_input("Fator perimetral (F)", key='F', step=.01, value=1.40)
+        transmitancia_do_piso_ou_veget = st.number_input("Transmitância de piso/vegetação (tau_pv, de 0 a 1)", step=.01, value=.85)
+        comprimento_piso = st.number_input("Comprimento do piso (C_piso, em m)", step=.01, value=50.00)
     with col2:
-        Te = st.number_input("Temperatura externa (T_e, em K)", key="te", value=308)
-        P = st.number_input("Perímetro (P, em m)", key="p", value=33)
-        E = st.number_input("E", key="eee", value=0.8)
-        transmitancia_na_reirrad = st.number_input("Transmitância na reirradiação (tau_ri, de 0 a 1)", value=.8)
-        largura_piso = st.number_input("Largura do piso (L_piso, em m)", value=6)
+        Te = st.number_input("Temperatura externa (T_e, em K)", key="te", step=.01, value=308.00)
+        P = st.number_input("Perímetro (P, em m)", key="p", step=.01, value=33.00)
+        E = st.number_input("E", key="eee", step=.01, value=0.80)
+        transmitancia_na_reirrad = st.number_input("Transmitância na reirradiação (tau_ri, de 0 a 1)", step=.01, value=.80)
+        largura_piso = st.number_input("Largura do piso (L_piso, em m)", step=.01, value=6.00)
     with col3:
-        m_ponto = st.number_input("m_ponto", key="m_ponto", value=4.21)
-        Fc = st.number_input("Fc", key="fc", value=0.214)
-        emissividade_atmosfera = st.number_input("Emissividade atmosfera", key="Emissividade atmosfera", value=0.83)
-        cp = st.number_input("Calor específico (cp, em J/(kg · K)", key="cp", value=1006)
+        m_ponto = st.number_input("m_ponto", key="m_ponto", step=.01, value=4.21)
+        Fc = st.number_input("Fc", key="fc", step=.01, value=0.214)
+        emissividade_atmosfera = st.number_input("Emissividade atmosfera", key="Emissividade atmosfera", step=.01, value=0.83)
+        cp = st.number_input("Calor específico (cp, em J/(kg · K)", key="cp", step=.01, value=1006.00)
 
     expr = Eq(- qrad - .1 * .03 * qrad + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * cp * (Ti - Te) + E * Fc * qrad
               + .03 * qrad + transmitancia_do_piso_ou_veget * transmitancia_na_reirrad * (comprimento_piso * largura_piso) *
@@ -83,11 +83,11 @@ with st.expander("Balanço de massa (wi)"):
     colA, colB, colC = st.columns(3)
 
     with colA:
-        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto", value=4.05)
+        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto", step=.01, value=4.05)
     with colB:
-        ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto", value=27)
+        ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto", step=.01, value=27.00)
     with colC:
-        we = st.number_input("we (Umidade relativa externa INV/VER) (%)", key="we", value=68)
+        we = st.number_input("we (Umidade relativa externa INV/VER) (%)", key="we", step=.01, value=68.00)
 
     wi = symbols("x")
 
@@ -116,11 +116,11 @@ with st.expander("Eficiência"):
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        tbse = st.number_input("Tbse (°C)", key="tbse", value=30.4)
+        tbse = st.number_input("Tbse (°C)", key="tbse", step=.01, value=30.40)
     with col2:
-        tbue = st.number_input("Tbue (°C)", key="tbue", value=22.2)
+        tbue = st.number_input("Tbue (°C)", key="tbue", step=.01, value=22.20)
     with col3:
-        eficiencia = st.number_input("Eficiência (%)", key="eficiencia", value=85)
+        eficiencia = st.number_input("Eficiência (%)", key="eficiencia", step=.01, value=85.00)
 
     tre = tbse - (eficiencia / 100) * (tbse - tbue)
 
@@ -158,13 +158,13 @@ with st.expander("Fluxo mássico"):
     colA, colB, colC = st.columns(3)
 
     with colA:
-        bp = st.number_input("Pressão barométrica (Pa)", value=93997)
-        intensidade_luz = st.number_input("Intensidade de luz (lux)", value=150710)
+        bp = st.number_input("Pressão barométrica (Pa)", step=.01, value=93997.00)
+        intensidade_luz = st.number_input("Intensidade de luz (lux)", step=.01, value=150710.00)
     with colB:
-        delta_T = st.number_input("Delta T (chute, Thais considerou = 1)", value=3.89)
+        delta_T = st.number_input("Delta T (chute, Thais considerou = 1)", step=.01, value=3.89)
     with colC:
-        largura_da_estufa = st.number_input("Largura da estufa (m) (cal/g°C)", value=10)
-        densidade_ar = st.number_input("Densidade do ar (1.07 kg/m³)", value=1.05)
+        largura_da_estufa = st.number_input("Largura da estufa (m) (cal/g°C)", step=.01, value=10.00)
+        densidade_ar = st.number_input("Densidade do ar (1.07 kg/m³)", step=.01, value=1.05)
 
     # Verificar qual é maior (Fcv e Fvel)
     # Novo v_ponto = comprimento *largura_da_estufa * 0.04064 * (Fcv || Fvel)
@@ -209,12 +209,12 @@ with st.expander("Novo Ti"):
     colX, colY, colZ = st.columns(3)
 
     with colX:
-        m_ponto = st.number_input("m_ponto (kg/s)", value=m_ponto_x)
-        qrad = st.number_input("qrad (W)", value=322000)
+        m_ponto = st.number_input("m_ponto (kg/s)", step=.01, value=m_ponto_x)
+        qrad = st.number_input("qrad (W)", step=.01, value=322000.00)
     with colY:
-        Te = st.number_input("Temperatura externa (T_e, em K)", value=30.4 + 273)
+        Te = st.number_input("Temperatura externa (T_e, em K)", step=.01, value=30.40 + 273.15)
     with colZ:
-        T_resfriamento = st.number_input("Temperatura de resfriamento (T_resfriamento, em K)", value=tre + 273)
+        T_resfriamento = st.number_input("Temperatura de resfriamento (T_resfriamento, em K)", step=.01, value=tre + 273.15)
 
     expr = Eq(- qrad - .1 * .03 * qrad + (U * Ac * (Ti - Te) + F * P * (Ti - Te)) + m_ponto * cp * (Ti - T_resfriamento) + E * Fc * qrad
               + .03 * qrad + transmitancia_do_piso_ou_veget * transmitancia_na_reirrad * (comprimento_piso * largura_piso) *
@@ -238,11 +238,11 @@ with st.expander("Balanço de massa (wi)"):
     colA, colB, colC = st.columns(3)
 
     with colA:
-        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto_2", value=4.05)
+        mp_ponto = st.number_input("mp_ponto (Evapotranspiração da planta) (kg/s)", key="mp_ponto_2", step=.01, value=4.05)
     with colB:
-        ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto_2", value=27)
+        ma_ponto = st.number_input("ma_ponto (kg/s)", key="ma_ponto_2", step=.01, value=27.00)
     with colC:
-        we = st.number_input("we (Umidade relativa externa) (%)", key="we_2", value=68)
+        we = st.number_input("we (Umidade relativa externa) (%)", key="we_2", step=.01, value=68.00)
 
     wi = symbols("x")
 
